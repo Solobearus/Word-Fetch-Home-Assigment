@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 // import logo from '../images/logo.svg';
 import style from './App.module.css';
 import Container from '../components/Container/Container.jsx'
+import requestPromise from 'request-promise'
+import request from 'request'
 
 class App extends Component {
 
@@ -12,10 +14,13 @@ class App extends Component {
     error: '',
   }
   
-  // the words we want to fetch data about
-  words = ['affiliate', 'marketing', 'influencer'];
+  
 
-  // the api calls we make for each call
+  // The words we want to fetch data about
+  words = ['affiliate', 'marketing', 'influencer'];
+  wordsTables = [];
+
+  // The api calls we make for each call
   apiCalls = [
     //Means like
     'https://api.datamuse.com/words?ml=',
@@ -24,32 +29,37 @@ class App extends Component {
     //Spelled like
     'https://api.datamuse.com/words?sp=',
   ]
-  
+
   fetchWords = () => {
 
-    fetch("https://api.datamuse.com/words?sl=affiliate")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result);
-          
-          this.setState({
-            isLoaded: true,
-            report: result
-          });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+    // all promises
+    let promises = [];
 
-    this.setState()
+    //for each word.
+    let wordsPromises = this.words.map(word => {
+
+      //make all api calls and save them as promises.
+      return this.apiCalls.map(url => requestPromise(url + word));
+    })
+    
+    //and now for each arr of promises in every word
+    wordsPromises.forEach((wordsPromise) => {
+
+      //for every promise in that array
+      wordsPromise.forEach((promise) => {
+
+        //push it to all promises
+        promises.push(promise);
+      })
+    })
+    
+    //Only after all promises are resolved
+    Promise.all(promises).then((data) => {      
+      let wordsResult = data.map((word,index) => {
+        console.log("Promise result " + index + " : " + word);
+
+      })
+    });
   }
 
   render() {
