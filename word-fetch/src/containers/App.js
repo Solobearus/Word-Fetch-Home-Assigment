@@ -1,23 +1,34 @@
 import React, { Component } from 'react';
-// import logo from '../images/logo.svg';
 import style from './App.module.css';
 import Container from '../components/Container/Container.jsx'
 import requestPromise from 'request-promise'
 import request from 'request'
+import WebSql from '../database/WebSql'
 
 class App extends Component {
 
+  webSql = null;
+
+  constructor(props){
+    super(props);
+    window.app = this;
+    this.webSql = new WebSql();
+  }
+
   state = {
-    showReport : false,
+    showReportToggle : false,
     isLoaded: false,
-    report : null,
+    report : [],
     error: '',
   }
   
-  
-
   // The words we want to fetch data about
   words = ['affiliate', 'marketing', 'influencer'];
+
+  // The filters we have for which we aggrigate data 
+  filter = ['ml','sl','sp'];
+
+  // The tables we as arrays before we make a sql table out of them
   wordsTables = [];
 
   // The api calls we make for each call
@@ -54,18 +65,53 @@ class App extends Component {
     })
     
     //Only after all promises are resolved
-    Promise.all(promises).then((data) => {      
-      let wordsResult = data.map((word,index) => {
-        console.log("Promise result " + index + " : " + word);
+    Promise.all(promises).then((data) => {    
 
+      //push a new array to wordsTables splicing the length of all the api calls we made for each word
+      while(data.length) this.wordsTables.push(data.splice(0,this.apiCalls.length));
+
+      this.webSql.deleteTables();
+      this.webSql.createTables();
+
+      //For each table (for each word)
+      this.wordsTables.forEach((wordTable,wordIndex) => {
+        
+        //For each filter (api call that was made for the word)
+        wordTable.forEach((filterResult,filterIndex) => {
+          
+          //filterResult is an object as a string , which we convert to a JSON object filterResultJson
+          let filterResultJson = JSON.parse(filterResult);
+
+          //We call populateTable sending the JSON Objects filterResultJson
+          this.webSql.populateTable(this.words[wordIndex], filterResultJson, this.filter[filterIndex]);
+        })
       })
     });
+  }
+
+  showReport = () => {
+    this.state.showReportToggle = !this.state.showReportToggle;
+
+    let reportTmp = [];
+
+    this.words.map((word) => {
+      //We push all report info per word
+      reportTmp.push(this.webSql.countByFilter(word));
+    })
+    console.log(reportTmp);
+    
+    this.setState({reportData : reportTmp})
   }
 
   render() {
     return (
       <div className={style.App}>
-        <Container fetchWords={this.fetchWords}></Container>
+        <Container 
+          fetchWords={this.fetchWords} 
+          showReport={this.showReport} 
+          showReportToggle={this.state.showReportToggle}
+          reportData = {this.state.reportData}>
+        </Container>
       </div>
     );
   }

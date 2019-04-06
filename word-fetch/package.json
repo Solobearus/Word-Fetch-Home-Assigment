@@ -5,10 +5,12 @@
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "react": "^16.8.6",
+    "react-chartist": "^0.13.3",
     "react-dom": "^16.8.6",
     "react-scripts": "2.1.8",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "websql": "^1.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
