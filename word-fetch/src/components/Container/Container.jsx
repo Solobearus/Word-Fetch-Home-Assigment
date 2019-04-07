@@ -8,14 +8,16 @@ const Container = (props) => {
     let report = null;
 
     if(props.showReportToggle){
-        report = <Report reportData = {props.reportData}></Report>
+        report = <Report className='Report' reportData = {props.reportData} words = {props.words}></Report>
     }
 
     return (
         <div className={ style.Container }>
             <Button click={props.fetchWords} value="Fetch-words"></Button>
             <Button click={props.showReport} value="Show-report"></Button>
-            {report}
+            <div className= { style.report }>
+                {report}
+            </div>
         </div>
     )
 }

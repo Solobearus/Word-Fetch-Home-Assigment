@@ -1,0 +1,28 @@
+.App {
+  text-align: center;
+  background-image: linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%);
+  height: 100vh;
+  width: 100%;
+
+  display: grid;
+  grid-template-areas: '. Container .';
+  grid-template-columns: auto 800px auto;
+
+  @media screen and (max-width:900px) {
+  grid-template-columns: auto 600px auto;
+  }
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: auto 400px auto;
+    }
+}
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

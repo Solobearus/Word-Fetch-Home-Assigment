@@ -90,21 +90,27 @@ class App extends Component {
   }
 
   showReport = () => {
-    this.state.showReportToggle = !this.state.showReportToggle;
-
     let promises = [];
 
     this.words.map((word) => {
-      //We push all report info per word
+
+      //countByFilter returns a promise that will return the aggrigated report for each word per filter.
       promises.push(this.webSql.countByFilter(word));
     })
-    // console.log(reportTmp);
-    // this.setState({reportData : reportTmp})
 
     Promise.all(promises).then((data) => {
-      for (let i = 0; i < data.length; i++) {
-        console.log(data[i]);
-      }
+
+      console.log(data);
+      // const reportData = data.map(()=>{});
+      
+      let reportData = data.map((obj) => {
+        return obj.rows;
+      });
+
+      console.log(reportData);
+      
+      // now we have the report so we can send it to the Report component via the state and show it to the user
+      this.setState({reportData : reportData , showReportToggle : !this.state.showReportToggle})
     });
   }
 
@@ -112,10 +118,12 @@ class App extends Component {
     return (
       <div className={style.App}>
         <Container
+          className={style.Container}
           fetchWords={this.fetchWords}
           showReport={this.showReport}
           showReportToggle={this.state.showReportToggle}
-          reportData={this.state.reportData}>
+          reportData={this.state.reportData}
+          words = {this.words}>
         </Container>
       </div>
     );

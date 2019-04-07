@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,OAAQ;EACJ,OAAO,EAAE,IAAI;EACb,qBAAqB,EAAE,WAAW;EAClC,GAAG,EAAE,IAAI;EAET,oCAAoC;IALxC,OAAQ;MAMA,qBAAqB,EAAE,GAAG",
+"sources": ["Report.module.scss"],
+"names": [],
+"file": "Report.module.css"
+}
